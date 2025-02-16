@@ -5,6 +5,7 @@ import { HydrationSwapInput } from "./HydrationSwapInput";
 import { ChopsticksProvider, setStorage, setup } from '@acala-network/chopsticks-core'
 import { ChopsticksInput } from "./ChopsticksInput";
 import { HexString } from '@polkadot/util/types'
+import { log } from "console";
 // import { IdbDatabase } from '@acala-network/chopsticks-db/browser.js'
 const app = express();
 // Middleware to parse JSON bodies
@@ -79,10 +80,12 @@ app.post('/get-extrinsic-events', async (req, res) => {
     dryRunResult =JSON.stringify({ outcome: outcome.toHuman(), storageDiff }, null, 2)
   } catch (e) {
     dryRunResult = (e as Error).toString()
+    await chain.close()
     res.status(404)
   }
   dryRunLoading = false
 
+  await chain.close()
   res.send(dryRunResult)
   console.log("Get-extrinsic-events Done! Resulted in: ", dryRunResult)
 });
